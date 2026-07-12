@@ -43,7 +43,7 @@ require "../koneksi.php";
             </form>
         </div>
         <div class="mt-3" style="width: 500px">
-            <a href="../index.php" class="btn btn-primary form-control">Kembali</a>
+            <a href="register.php" class="btn btn-primary form-control">Kembali</a>
 
             <?php
 

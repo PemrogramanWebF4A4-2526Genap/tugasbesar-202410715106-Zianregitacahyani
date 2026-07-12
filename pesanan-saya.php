@@ -22,7 +22,7 @@ require_once 'koneksi.php';
 // =====================================================
 // Jika belum login, arahkan ke halaman login
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
-    header('Location: login.php');
+    header('Location: login/login.php');
     exit;
 }
 
@@ -51,7 +51,7 @@ $resultUser = $stmtUser->get_result();
 // Jika user tidak ditemukan, logout paksa
 if ($resultUser->num_rows === 0) {
     session_destroy();
-    header('Location: login.php');
+    header('Location: login/login.php');
     exit;
 }
 

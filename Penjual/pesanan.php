@@ -11,6 +11,7 @@ session_start();
 // Include file koneksi database
 // File koneksi.php menghasilkan object mysqli bernama $mysqli
 require_once '../koneksi.php';
+require_once '../mail/kirim-email.php';
 
 // =============================================
 // 1. CEK HAK AKSES
@@ -81,6 +82,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
             if ($buyer) {
 
                 $buyer_id = $buyer['buyer_id'];
+
+                // Ambil data buyer
+                $qEmail = $mysqli->prepare("
+SELECT u.name, u.email
+FROM orders o
+JOIN users u ON o.buyer_id = u.id
+WHERE o.id = ?
+");
+
+                $qEmail->bind_param("i", $order_id);
+                $qEmail->execute();
+                $dataBuyer = $qEmail->get_result()->fetch_assoc();
+                $qEmail->close();
+
+                if ($dataBuyer) {
+
+                    kirimEmail(
+                        $dataBuyer['email'],
+                        $dataBuyer['name'],
+                        'Status Pesanan AquaGas',
+                        '
+                        <h2>Halo ' . $dataBuyer['name'] . ' 👋</h2>
+
+                        <p>Status pesanan Anda telah diperbarui.</p>
+
+                        <p><strong>Order ID:</strong> #' . $order_id . '</p>
+
+                        <p><strong>Status:</strong> ' . ucfirst($new_status) . '</p>
+
+                        <br>
+
+                        <p>Terima kasih telah berbelanja di AquaGas.</p>
+
+                        <p><b>Tim AquaGas</b></p>
+                        '
+                    );
+                }
 
                 // Pesan notifikasi
                 $message = "Status pesanan #$order_id berubah menjadi '$new_status'.";
